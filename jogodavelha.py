@@ -1,7 +1,7 @@
 import xmlrpc.server
 from xmlrpc.server import SimpleXMLRPCServer
 
-servidor = SimpleXMLRPCServer(('localhost',8000), allow_none=True)
+servidor = SimpleXMLRPCServer(('127.0.0.1',50080), allow_none=True)
 
 # tabuleiro 7x7
 tabuleiro = [ ['-', '-', '-', '-', '-', '-', '-'],
@@ -43,42 +43,37 @@ def le_entrada(linha, coluna):
 def verifica_diagonal():
   for i in range(4):
       for j in range(7):
-        if((tabuleiro[i][j] and tabuleiro[i+1][j+1] and tabuleiro[i+2][j+2]+tabuleiro[i+3][j+3])):
-          print("Vitoria!")
-  return
+        if((tabuleiro[i][j] == 'x' and tabuleiro[i+1][j+1] == 'x' and tabuleiro[i+2][j+2]== 'x' and tabuleiro[i+3][j+3]) == 'x'):
+          return True
+        elif((tabuleiro[i][j] == 'o' and tabuleiro[i+1][j+1] == 'o' and tabuleiro[i+2][j+2]== 'o' and tabuleiro[i+3][j+3]) == 'o'):
+          return True
+  return False
 
 
 def verifica_hori():
   for i in range(7):
     for j in range(4):
       if((tabuleiro[i][j] == 'x' and tabuleiro[i][j+1]== 'x' and tabuleiro[i][j+2] == 'x' and tabuleiro[i][j+3]) == 'x'):
-        print("Vitoria!")
         return True
       elif((tabuleiro[i][j] == 'o' and tabuleiro[i][j+1]== 'o' and tabuleiro[i][j+2]== 'o' and tabuleiro[i][j+3]) == 'o'):
-        print("Vitoria!")
         return True
-      else:
-        return
+  return False
 
 def verifica_vert():
     for i in range(4):
       for j in range(7):
         if((tabuleiro[j][i] == 'x' and tabuleiro[j+1][i] == 'x' and tabuleiro[j+2][i] == 'x' and tabuleiro[j+3][i]) == 'x'):
-          print("Vitoria!")
           return True
         elif((tabuleiro[j][i] == 'o' and tabuleiro[j+1][i] == 'o' and tabuleiro[j+2][i] == 'o' and tabuleiro[j+3][i]) == 'o'):
-          print("Vitoria!")
           return True
-        else:
-          return
+    return False
 
 def verifica_vitoria():
-  # if(verifica_diagonal()):
-  if(verifica_hori()):
-    print("Fim de jogo!")
+  if(verifica_diagonal()):
+    return True
+  elif(verifica_hori()):
     return True
   elif(verifica_vert()):
-    print("Fim de jogo!")
     return True
   else:
     return False

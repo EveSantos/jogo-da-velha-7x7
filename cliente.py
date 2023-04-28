@@ -8,7 +8,7 @@ def imprime_matriz(tabuleiro):
 
 def main():
 
-  cliente = xmlrpc.client.ServerProxy('http://localhost:8000')
+  cliente = xmlrpc.client.ServerProxy('http://127.0.0.1:50080')
   
   print("Digite o seu nome: ")
   nome = input()
