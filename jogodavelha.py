@@ -1,11 +1,11 @@
 import xmlrpc.server
 from xmlrpc.server import SimpleXMLRPCServer
 
-servidor = SimpleXMLRPCServer(('localhost',8000))
+servidor = SimpleXMLRPCServer(('localhost',8000), allow_none=True)
 
 # tabuleiro 7x7
 tabuleiro = [ ['-', '-', '-', '-', '-', '-', '-'],
-                ['-', '-', '-', '-', '-', '-', '-'],
+                ['-', 'x', 'x', 'x', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
@@ -15,15 +15,15 @@ tabuleiro = [ ['-', '-', '-', '-', '-', '-', '-'],
 def add(x,y):
     return x+ y
 
+# dicionario
+dicionario = {}
+
 servidor.register_function(add, 'add')
 
 para=False
 
-def imprime_matriz():
-    for i in range(7):
-      for j in range(7):
-        print(tabuleiro[i][j], end=' ')
-      print()
+def retorna_matriz():
+  return tabuleiro
 
 
 def verifica_coord(linha, coluna):
@@ -33,27 +33,12 @@ def verifica_coord(linha, coluna):
     return False
 
 
-def le_entrada(cont):
-    valores = []
-    linha = -1
-    coluna = -1
-    
-    if(cont == 3):
-      cont = 1
-    while linha < 0 or linha > 6:
-      print("Escolha uma posição válida para a linha: ")
-      linha = input()
-      linha = int(linha)
-    
-    while coluna < 0 or coluna > 6:
-      print("Agora escolha uma posição válida para a coluna: ")
-      coluna = input()
-      coluna = int(coluna)
-    
-    valores.append(linha)
-    valores.append(coluna)
-    valores.append(cont)
-    return valores
+def le_entrada(linha, coluna):
+    if linha < 0 or linha > 6:
+      return False
+
+    if coluna < 0 or coluna > 6:
+      return False
 
 def verifica_diagonal():
   for i in range(4):
@@ -65,27 +50,30 @@ def verifica_diagonal():
 
 def verifica_hori():
   for i in range(7):
-      for j in range(4):
-        if((tabuleiro[i][j] == tabuleiro[i][j+1] == tabuleiro[i][j+2]+tabuleiro[i][j+3]) ):
-          print("Vitoria!")
-          return True
-        else:
-          return
-
+    for j in range(4):
+      if((tabuleiro[i][j] == 'x' and tabuleiro[i][j+1]== 'x' and tabuleiro[i][j+2] == 'x' and tabuleiro[i][j+3]) == 'x'):
+        print("Vitoria!")
+        return True
+      elif((tabuleiro[i][j] == 'o' and tabuleiro[i][j+1]== 'o' and tabuleiro[i][j+2]== 'o' and tabuleiro[i][j+3]) == 'o'):
+        print("Vitoria!")
+        return True
+      else:
+        return
 
 def verifica_vert():
     for i in range(4):
       for j in range(7):
-        if((tabuleiro[j][i] == tabuleiro[j+1][i] == tabuleiro[j+2][i]+tabuleiro[j+3][i]) ):
+        if((tabuleiro[j][i] == 'x' and tabuleiro[j+1][i] == 'x' and tabuleiro[j+2][i] == 'x' and tabuleiro[j+3][i]) == 'x'):
+          print("Vitoria!")
+          return True
+        elif((tabuleiro[j][i] == 'o' and tabuleiro[j+1][i] == 'o' and tabuleiro[j+2][i] == 'o' and tabuleiro[j+3][i]) == 'o'):
           print("Vitoria!")
           return True
         else:
           return
 
-
 def verifica_vitoria():
   # if(verifica_diagonal()):
-  #   print("Fim de jogo!")
   if(verifica_hori()):
     print("Fim de jogo!")
     return True
@@ -93,56 +81,43 @@ def verifica_vitoria():
     print("Fim de jogo!")
     return True
   else:
-    return ("erro")
-  
+    return False
 
-def verifica_vazio(linha, coluna):
-  i=0
-  j=0
-  if(tabuleiro[linha-1][coluna-1] == '-'):
-    # if (cont % 2 == 1):
-    #   tabuleiro[linha-1][coluna-1] = 'x'
-    #   para = verifica_vitoria()
-    # elif(cont % 2 != 1):
-    #   tabuleiro[linha-1][coluna-1] = 'o'
-    #   para = verifica_vitoria()
-    # elif(verifica_vitoria()):
-    #   imprime_matriz()
-    #   exit()
-    
-    para = verifica_vitoria()
-    tabuleiro[linha-1][coluna-1] = 'x'
-    imprime_matriz()
-    return para
-    
+def faz_jogada(linha, coluna, nome):
+  if(tabuleiro[linha][coluna] == '-'):
+    tabuleiro[linha][coluna] = dicionario[nome]["caracter"]
+    dicionario[nome]["vez"] = False
+    for chave in dicionario:
+      if not chave == nome:
+        dicionario[chave]["vez"] = True
+
+
+def cadastra_jogador(nome):
+  global dicionario
+  if dicionario == {}:
+    dicionario[nome] = {"caracter":'x', "vez":True}
+  elif not nome in dicionario:
+    dicionario[nome] = {"caracter":'o', "vez":False}
   else:
-    print("Espaço não disponível")
+    return False 
+  return True
 
-servidor.register_function(verifica_vazio, 'verifica_vazio')
+def verifica_vez(nome):
+  global dicionario
+  return dicionario[nome]["vez"]
 
-def main():
-  # if(verifica_vitoria()):
-  #   print( "\n")
-  #   print(" Fim de Jogo!")
-  #   print( "\n")
-  #   imprime_matriz()
-  # return
-  # jogadas = 49
-  cont=1
-  n=0
-  # for n in range(100):
-  while not para:
-    jogador = le_entrada(cont)
-    if(jogador[2] == 3):
-      cont = 1
-    else:
-      cont = cont +1
-    print(jogador)
-    resultado = verifica_coord(jogador[0], jogador[1])
+def status_jogo():
+  global dicionario
+  if(len(dicionario) == 2):
+    return True
+  else:
+    return False
 
-    if(resultado == True):
-      verifica_vazio(jogador[0], jogador[1], cont)
-
-# main()
+servidor.register_function(cadastra_jogador, 'cadastra_jogador')
+servidor.register_function(faz_jogada, 'faz_jogada')
+servidor.register_function(verifica_vitoria, 'verifica_vitoria')
+servidor.register_function(verifica_vez, 'verifica_vez')
+servidor.register_function(retorna_matriz, 'retorna_matriz')
+servidor.register_function(status_jogo, 'status_jogo')
 
 servidor.serve_forever()
