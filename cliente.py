@@ -19,18 +19,31 @@ def main():
     cadastrado = cliente.cadastra_jogador(nome)
   print("Aguardando o outro jogador...")
 
-  # while not cliente.verifica_inicio():
-  while not cliente.verifica_vitoria():
+  vitoria = cliente.verifica_vitoria()
+  while not vitoria:
     if(cliente.status_jogo()):
-      print("Jogo em andamento...")
       if(cliente.verifica_vez(nome)):
           tabuleiro = cliente.retorna_matriz()
           imprime_matriz(tabuleiro)
+
+          print("\n Faça sua jogada: (linha, coluna)")
           linha = input()
           linha = int(linha)
+
           coluna = input()
           coluna = int(coluna)
-          # while (cliente)
-          cliente.faz_jogada(linha, coluna, nome)
+          
+          jogada_valida = cliente.faz_jogada(linha, coluna, nome)
+          while(jogada_valida == False):
+            print("Jogada inválida! Faça novamente sua jogada: (linha, coluna)")
+            linha = input()
+            linha = int(linha)
 
+            coluna = input()
+            coluna = int(coluna)
+            jogada_valida = cliente.faz_jogada(linha, coluna, nome)
+            
+    vitoria = cliente.verifica_vitoria()
+
+  print("Fim de jogo!")
 main()

@@ -85,6 +85,9 @@ def faz_jogada(linha, coluna, nome):
     for chave in dicionario:
       if not chave == nome:
         dicionario[chave]["vez"] = True
+    return True
+  else:
+    return False
 
 
 def cadastra_jogador(nome):
