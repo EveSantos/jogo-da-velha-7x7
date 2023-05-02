@@ -4,7 +4,7 @@ from xmlrpc.server import SimpleXMLRPCServer
 servidor = SimpleXMLRPCServer(('127.0.0.1',50080), allow_none=True)
 
 # tabuleiro 7x7
-tabuleiro = [ ['-', '-', '-', '-', '-', '-', '-'],
+tabuleiro = [   ['-', '-', '-', '-', '-', '-', '-'],
                 ['-', 'x', 'x', 'x', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
@@ -25,14 +25,6 @@ para=False
 def retorna_matriz():
   return tabuleiro
 
-
-def verifica_coord(linha, coluna):
-  if(tabuleiro[linha-1][coluna-1]):
-    return True
-  else:
-    return False
-
-
 def le_entrada(linha, coluna):
     if linha < 0 or linha > 6:
       return False
@@ -41,8 +33,8 @@ def le_entrada(linha, coluna):
       return False
 
 def verifica_diagonal():
-  for i in range(4):
-      for j in range(7):
+  for i in range(3):
+      for j in range(6):
         if((tabuleiro[i][j] == 'x' and tabuleiro[i+1][j+1] == 'x' and tabuleiro[i+2][j+2]== 'x' and tabuleiro[i+3][j+3]) == 'x'):
           return True
         elif((tabuleiro[i][j] == 'o' and tabuleiro[i+1][j+1] == 'o' and tabuleiro[i+2][j+2]== 'o' and tabuleiro[i+3][j+3]) == 'o'):
@@ -51,8 +43,8 @@ def verifica_diagonal():
 
 
 def verifica_hori():
-  for i in range(7):
-    for j in range(4):
+  for i in range(3):
+    for j in range(6):
       if((tabuleiro[i][j] == 'x' and tabuleiro[i][j+1]== 'x' and tabuleiro[i][j+2] == 'x' and tabuleiro[i][j+3]) == 'x'):
         return True
       elif((tabuleiro[i][j] == 'o' and tabuleiro[i][j+1]== 'o' and tabuleiro[i][j+2]== 'o' and tabuleiro[i][j+3]) == 'o'):
@@ -60,8 +52,8 @@ def verifica_hori():
   return False
 
 def verifica_vert():
-    for i in range(4):
-      for j in range(7):
+    for i in range(3):
+      for j in range(6):
         if((tabuleiro[j][i] == 'x' and tabuleiro[j+1][i] == 'x' and tabuleiro[j+2][i] == 'x' and tabuleiro[j+3][i]) == 'x'):
           return True
         elif((tabuleiro[j][i] == 'o' and tabuleiro[j+1][i] == 'o' and tabuleiro[j+2][i] == 'o' and tabuleiro[j+3][i]) == 'o'):
@@ -106,7 +98,7 @@ def verifica_vez(nome):
 
 def status_jogo():
   global dicionario
-  if(len(dicionario) == 2):
+  if(len(dicionario) == 2 and not verifica_vitoria()):
     return True
   else:
     return False
