@@ -19,6 +19,9 @@ def main():
   print("Digite o seu nome: ")
   nome = input()
   cadastrado = cliente.cadastra_jogador(nome)
+  if(cadastrado == -1):
+    print("Máximo de jogadores atingido!")
+    exit()
   while cadastrado == False:
     print("Digite o seu nome: ")
     nome = input()
@@ -50,6 +53,8 @@ def main():
             coluna = int(entrada[1])
 
             jogada_valida = cliente.faz_jogada(linha, coluna, nome)
+          
+          imprime_matriz(tabuleiro)
           print("\n Aguardando o outro jogador\n")
     vitoria = cliente.verifica_vitoria()
     

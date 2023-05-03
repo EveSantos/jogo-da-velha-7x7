@@ -84,6 +84,8 @@ def faz_jogada(linha, coluna, nome):
 
 def cadastra_jogador(nome):
   global dicionario
+  if(len(dicionario) == 2):
+    return -1
   if dicionario == {}:
     dicionario[nome] = {"caracter":'x', "vez":True}
   elif not nome in dicionario:
