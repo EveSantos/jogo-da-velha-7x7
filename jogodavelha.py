@@ -7,20 +7,26 @@ servidor = SimpleXMLRPCServer(('127.0.0.1',50080), allow_none=True)
 tabuleiro = [   ['-', '-', '-', '-', '-', '-', '-'],
                 ['-', 'x', 'x', 'x', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
-                ['-', '-', '-', '-', '-', '-', '-'],
+                ['-', 'o', 'o', 'o', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-'],
                 ['-', '-', '-', '-', '-', '-', '-']]
 
-def add(x,y):
-    return x+ y
-
 # dicionario
 dicionario = {}
 
-servidor.register_function(add, 'add')
+vencedor = None
 
 para=False
+
+def armazena_vencedor(nome):
+  global vencedor
+  vencedor = nome
+  return vencedor
+
+def retorna_vencedor():
+  global vencedor
+  return vencedor
 
 def retorna_matriz():
   return tabuleiro
@@ -37,17 +43,25 @@ def verifica_diagonal():
       for j in range(6):
         if((tabuleiro[i][j] == 'x' and tabuleiro[i+1][j+1] == 'x' and tabuleiro[i+2][j+2]== 'x' and tabuleiro[i+3][j+3]) == 'x'):
           return True
-        elif((tabuleiro[i][j] == 'o' and tabuleiro[i+1][j+1] == 'o' and tabuleiro[i+2][j+2]== 'o' and tabuleiro[i+3][j+3]) == 'o'):
+        if((tabuleiro[i][j] == 'o' and tabuleiro[i+1][j+1] == 'o' and tabuleiro[i+2][j+2]== 'o' and tabuleiro[i+3][j+3]) == 'o'):
           return True
+  # matriz secundaria
+  for i in range(3):
+      for j in range(6, 2, -1):
+        if((tabuleiro[i][j] == 'x' and tabuleiro[i+1][j-1] == 'x' and tabuleiro[i+2][j-2]== 'x' and tabuleiro[i+3][j-3] == 'x')):
+          return True
+        if (tabuleiro[i][j] == 'o' and tabuleiro[i+1][j-1] == 'o' and tabuleiro[i+2][j-2]== 'o' and tabuleiro[i+3][j-3] == 'o'):
+          return True
+  
   return False
 
 
 def verifica_hori():
-  for i in range(3):
-    for j in range(6):
+  for i in range(6):
+    for j in range(3):
       if((tabuleiro[i][j] == 'x' and tabuleiro[i][j+1]== 'x' and tabuleiro[i][j+2] == 'x' and tabuleiro[i][j+3]) == 'x'):
         return True
-      elif((tabuleiro[i][j] == 'o' and tabuleiro[i][j+1]== 'o' and tabuleiro[i][j+2]== 'o' and tabuleiro[i][j+3]) == 'o'):
+      if((tabuleiro[i][j] == 'o' and tabuleiro[i][j+1]== 'o' and tabuleiro[i][j+2]== 'o' and tabuleiro[i][j+3]) == 'o'):
         return True
   return False
 
@@ -109,5 +123,7 @@ servidor.register_function(verifica_vitoria, 'verifica_vitoria')
 servidor.register_function(verifica_vez, 'verifica_vez')
 servidor.register_function(retorna_matriz, 'retorna_matriz')
 servidor.register_function(status_jogo, 'status_jogo')
+servidor.register_function(retorna_vencedor, 'retorna_vencedor')
+servidor.register_function(armazena_vencedor, 'armazena_vencedor')
 
 servidor.serve_forever()

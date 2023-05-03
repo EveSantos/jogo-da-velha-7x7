@@ -50,10 +50,16 @@ def main():
             coluna = int(entrada[1])
 
             jogada_valida = cliente.faz_jogada(linha, coluna, nome)
-          print("\n Aguardando o outro jogador\n")
+
+          tabuleiro = cliente.retorna_matriz()
+          imprime_matriz(tabuleiro)
+          if(cliente.verifica_vitoria()):
+            cliente.armazena_vencedor(nome)
+          else:
+            print("\n Aguardando o outro jogador\n")
     vitoria = cliente.verifica_vitoria()
     
     time.sleep(0.5)
-
-  print("Fim de jogo!")
+  vencedor = cliente.retorna_vencedor()
+  print("Fim de jogo! O vencedor foi: " + vencedor)
 main()
